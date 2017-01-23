@@ -48,6 +48,13 @@ var Log = function(x, y, speed, begin, end) {
 };
 Log.prototype = Object.create(Helper.prototype);
 
+var Turtle = function(x, y, speed, begin, end) {
+    Helper.call(this, x, y, 'images/turtle.png', speed);
+    this.begin = begin;
+    this.end = end;
+};
+Turtle.prototype = Object.create(Helper.prototype);
+
 var Car = function(x, y, speed) {
     Enemy.call(this, x, y, 'images/car-right.png', speed);
     this.begin = -101;
@@ -84,7 +91,7 @@ Player.prototype.update = function() {
     if (this.y > 0 && this.y < 320) {
         for (i = 0; i < allHelpers.length; i++) {
             if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
-                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2;
+                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
             } else if (this.y + 53 === allHelpers[i].y) {
                 this.x = 505;
                 this.y = 655;
@@ -95,6 +102,7 @@ Player.prototype.update = function() {
             if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
                 this.x = 505;
                 this.y = 655;
+                
             }
         }
     }
@@ -120,7 +128,7 @@ Player.prototype.handleInput = function(k) {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [new Truck(-101, 394, 500), new Truck(505, 394, 500), new Car(-101, 477, 750), new Bug(-101, 560, 900)];
-var allHelpers = [new Log(202, 127, 300, -202, 1100), new Log(1111, 210, -600, 1110, -200), new Log(-101, 293, 400, -202, 1100)]
+var allHelpers = [new Log(202, 127, 300, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Log(-101, 293, 400, -202, 1100)]
 var allMovables = allHelpers.concat(allEnemies);
 var player = new Player();
 

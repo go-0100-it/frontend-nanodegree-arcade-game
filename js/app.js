@@ -77,6 +77,7 @@ var Player = function() {
     this.x = 505;
     this.y = 655;
     this.lives = 5;
+    this.level = 1;
 };
 
 Player.prototype.update = function() {
@@ -98,9 +99,17 @@ Player.prototype.update = function() {
             }
         }
     } else if (this.y === -9) {
-        console.log("Level Complete");
-        this.restart();
+        var message;
+        if(this.level < 10){
+            message = "Level " + (this.level) + " Complete!"
+            this.level++;
+        }else {
+            //All levels completed, Player has won the game.
+            message = "WINNER!!! All levels Complete!"
+        }
         // Show level complete modal, click ok to start next level.
+        showModal(message);
+        this.restart();
     }
 };
 
@@ -152,6 +161,7 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
-    player.handleInput(allowedKeys[e.keyCode]);
+    if(_modal.style.display == "none"){
+        player.handleInput(allowedKeys[e.keyCode]);
+    }
 });

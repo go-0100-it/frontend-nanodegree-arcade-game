@@ -6,8 +6,27 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- The MODAL - by default styled not visible-->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal_content" id="modal_container">
+            <img class="close" id="close_btn" src="Images/close_button_grey.png" alt="close" onclick="modal(close_modal)" onmouseover="pointer(hover,this);" onmouseout="pointer(unhover,this);">
+            <h2 id="modal_title">Projects</h2>
+            <p id="modal_text"> </p>
+            <div class="link_container" id="page_link_container">
+                <a href=" " class="nav_link" id="page_link">See page here</a>
+            </div>
+            <div class="link_container" id="code_link_container">
+                <a href=" " class="nav_link" id="code_link">See code here</a>
+            </div>
+            <!-- model close image button -->
+            <img id="project_example_image" src="Images/image_not_available.png " alt="Screen shot of the Inventory App's products list.">
+        </div>
+    </div>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
+    <script src="js/modal.js"></script>
 </body>
+
 </html>

@@ -80,25 +80,11 @@ var Player = function() {
     this.level = 1;
 };
 
-var splash = new Howl({
-    src: ['sounds/splash.mp3']
-});
-
-var squish = new Howl({
-    src: ['sounds/squish.wav']
-});
-
-var levelComplete = new Howl({
-    src: ['sounds/levelComplete.mp3']
-});
-
-var winner = new Howl({
-    src: ['sounds/winner.wav']
-});
-
-var gameOver = new Howl({
-    src: ['sounds/gameOver.mp3']
-});
+var sounds = [new Howl({src: ['sounds/splash.mp3']}),
+              new Howl({src: ['sounds/squish.wav']}),
+              new Howl({src: ['sounds/levelComplete.mp3']}),
+              new Howl({src: ['sounds/winner.wav']}),
+              new Howl({src: ['sounds/gameOver.mp3']})];
 
 Player.prototype.update = function() {
 
@@ -107,7 +93,7 @@ Player.prototype.update = function() {
             if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
                 this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
             } else if (this.y + 53 === allHelpers[i].y) {
-                splash.play();
+                sounds[0].play();
                 this.restart();
                 this.loseLife();
             }
@@ -115,7 +101,7 @@ Player.prototype.update = function() {
     } else if (this.y > 330 && this.y < 650) {
         for (i = 0; i < allEnemies.length; i++) {
             if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
-                squish.play();
+                sounds[1].play();
                 this.restart();
                 this.loseLife();
             }
@@ -123,12 +109,13 @@ Player.prototype.update = function() {
     } else if (this.y === -9) {
         var message;
         if (this.level < 10) {
-            levelComplete.play();
+            sounds[2].play();
             message = "Level " + (this.level) + " Complete!"
+            updateLevel(this.level);
             this.level++;
         } else {
             //All levels completed, Player has won the game.
-            winner.play();
+            sounds[3].play();
             message = "WINNER!!! All levels Complete!"
         }
         // Show level complete modal, click ok to start next level.
@@ -164,10 +151,11 @@ Player.prototype.loseLife = function() {
 
     // If on last life, show game over modal, click try again or exit. reset level to 1 and lives back to 5.
     if (this.lives <= 0) {
-        gameOver.play();
+        sounds[4].play();
         var message = "GAME OVER!"
         showModal(message);
         this.level = 1;
+        updateLevel(0);
         this.lives = 5;
         this.restart();
     }
@@ -176,11 +164,38 @@ Player.prototype.loseLife = function() {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 750, -101, 1100), new Bug(-101, 560, 900, -101, 1100)];
-var allHelpers = [new Log(202, 127, 300, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 400, -202, 1100)]
-var allMovables = allHelpers.concat(allEnemies);
-var player = new Player();
 
+var LevelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Bug(-101, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Bug(-101, 560, 600, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Bug(-101, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Bug(-101, 560, 600, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Bug(-101, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Bug(-101, 560, 500, -101, 1100), new Bug(505, 560, 500, -101, 1100)]];
+
+var LevelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300, 1110, -100), new Log(-101, 293, 350, -202, 1100)],
+                    [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
+                    [new Log(202, 127, 450, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
+                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
+                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
+                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
+                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
+                    [new Turtle(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
+                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
+                    [new Turtle(202, 127, 550, -202, 1100), new Turtle(1111, 210, -600, 1110, -100), new Turtle(-101, 293, 650, -202, 1100)]];
+
+var updateLevel = function(level){
+    allEnemies = LevelEnemies[level];
+    allHelpers = LevelHelpers[level];
+    allMovables = allHelpers.concat(allEnemies);
+};
+
+updateLevel(0);
+
+var player = new Player();
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
@@ -192,5 +207,7 @@ document.addEventListener('keyup', function(e) {
     };
     if (_modal.style.display == "none") {
         player.handleInput(allowedKeys[e.keyCode]);
+    } else if (e.keyCode === 13){
+        _modal.style.display = "none";
     }
 });

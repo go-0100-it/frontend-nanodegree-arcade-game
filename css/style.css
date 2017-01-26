@@ -50,3 +50,15 @@ body {
     margin-top: 2vw;
 }
 
+/* The Close Button */
+
+.close {
+    width: 3vw;
+    height: 3vw;
+    float: right;
+}
+
+.close:hover,
+.close:focus {
+    cursor: pointer;
+}

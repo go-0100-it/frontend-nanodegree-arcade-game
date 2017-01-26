@@ -80,11 +80,6 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        checkCollisions();
-    }
-
-    function checkCollisions() {
-
     }
 
     /* This is called by the update function and loops through all of the
@@ -177,7 +172,7 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/log.png',
-        //'images/turtle.png',
+        'images/turtle.png',
         'images/truck-right-small.png',
         'images/car-right.png',
         'images/enemy-bug.png',

@@ -4,10 +4,6 @@ var _modal = document.getElementById('myModal');
 var modelTitle = document.getElementById("modal_title");
 var modalText = document.getElementById("modal_text");
 var modalImage = document.getElementById("project_example_image");
-var modalCodeLink = document.getElementById("code_link");
-var modalPageLink = document.getElementById("page_link");
-var modalCodeLinkContainer = document.getElementById("code_link_container");
-var modalPageLinkContainer = document.getElementById("page_link_container");
 
 _modal.style.display = "none";
 
@@ -66,23 +62,7 @@ var showModal = function(message) {
     //     modalImage.style.display = "block";
     //     modalImage.src = projects[projectNum].imageSrc;
     // } else {
-        modalImage.style.display = "none";
-    //}
-
-    //Setting the code link Url of the selected project if one exists else, hiding the element.
-    // if (projects[projectNum].codeLink) {
-    //     modalCodeLinkContainer.style.display = "block";
-    //     modalCodeLink.href = projects[projectNum].codeLink;
-    // } else {
-        modalCodeLinkContainer.style.display = "none";
-    //}
-
-    //Setting the page link Url of the selected project if one exists else, hiding the element.
-    // if (projects[projectNum].pageLink) {
-    //     modalPageLinkContainer.style.display = "block";
-    //     modalPageLink.href = projects[projectNum].pageLink;
-    // } else {
-        modalPageLinkContainer.style.display = "none";
+    modalImage.style.display = "none";
     //}
 
     //Displaying the modal.

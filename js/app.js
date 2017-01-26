@@ -80,6 +80,26 @@ var Player = function() {
     this.level = 1;
 };
 
+var splash = new Howl({
+    src: ['sounds/splash.mp3']
+});
+
+var squish = new Howl({
+    src: ['sounds/squish.wav']
+});
+
+var levelComplete = new Howl({
+    src: ['sounds/levelComplete.mp3']
+});
+
+var winner = new Howl({
+    src: ['sounds/winner.wav']
+});
+
+var gameOver = new Howl({
+    src: ['sounds/gameOver.mp3']
+});
+
 Player.prototype.update = function() {
 
     if (this.y > 0 && this.y < 320) {
@@ -87,6 +107,7 @@ Player.prototype.update = function() {
             if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
                 this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
             } else if (this.y + 53 === allHelpers[i].y) {
+                splash.play();
                 this.restart();
                 this.loseLife();
             }
@@ -94,17 +115,20 @@ Player.prototype.update = function() {
     } else if (this.y > 330 && this.y < 650) {
         for (i = 0; i < allEnemies.length; i++) {
             if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
+                squish.play();
                 this.restart();
                 this.loseLife();
             }
         }
     } else if (this.y === -9) {
         var message;
-        if(this.level < 10){
+        if (this.level < 10) {
+            levelComplete.play();
             message = "Level " + (this.level) + " Complete!"
             this.level++;
-        }else {
+        } else {
             //All levels completed, Player has won the game.
+            winner.play();
             message = "WINNER!!! All levels Complete!"
         }
         // Show level complete modal, click ok to start next level.
@@ -140,7 +164,12 @@ Player.prototype.loseLife = function() {
 
     // If on last life, show game over modal, click try again or exit. reset level to 1 and lives back to 5.
     if (this.lives <= 0) {
-        // Show game over modal
+        gameOver.play();
+        var message = "GAME OVER!"
+        showModal(message);
+        this.level = 1;
+        this.lives = 5;
+        this.restart();
     }
 }
 
@@ -161,7 +190,7 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-    if(_modal.style.display == "none"){
+    if (_modal.style.display == "none") {
         player.handleInput(allowedKeys[e.keyCode]);
     }
 });

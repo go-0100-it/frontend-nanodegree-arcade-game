@@ -1,5 +1,5 @@
-// Movables are all moving objects in the game
-var Movables = function(x, y, sprite, speed, begin, end) {
+// Super Class for all auto moving objects in the game
+var Movables = function(x, y, sprite, speed, beginPos, endPos) {
 
     // The image/sprite for our movables, this uses
     // a helper we've provided to easily load images
@@ -7,19 +7,19 @@ var Movables = function(x, y, sprite, speed, begin, end) {
     this.y = y;
     this.speed = speed;
     this.sprite = sprite;
-    this.begin = begin;
-    this.end = end;
+    this.beginPos = beginPos;
+    this.endPos = endPos;
 };
 
-// Enemies our player must avoid
-var Enemy = function(x, y, sprite, speed, begin, end) {
-    Movables.call(this, x, y, sprite, speed, begin, end);
+// Super Class for enemies our player must avoid
+var Enemy = function(x, y, sprite, speed, beginPos, endPos) {
+    Movables.call(this, x, y, sprite, speed, beginPos, endPos);
 };
 Enemy.prototype = Object.create(Movables.prototype);
 
-// Helpers our player must use
-var Helper = function(x, y, sprite, speed, begin, end) {
-    Movables.call(this, x, y, sprite, speed, begin, end);
+// Super Class for helpers our player must use
+var Helper = function(x, y, sprite, speed, beginPos, endPos) {
+    Movables.call(this, x, y, sprite, speed, beginPos, endPos);
 };
 Helper.prototype = Object.create(Movables.prototype);
 
@@ -31,10 +31,10 @@ Movables.prototype.update = function(dt) {
     // all computers.
 
     this.x = this.x + this.speed * dt;
-    if (this.end < this.begin && this.x < this.end) {
-        this.x = this.begin;
-    } else if (this.end > this.begin && this.x > this.end) {
-        this.x = this.begin;
+    if (this.endPos < this.beginPos && this.x < this.endPos) {
+        this.x = this.beginPos;
+    } else if (this.endPos > this.beginPos && this.x > this.endPos) {
+        this.x = this.beginPos;
     }
 };
 
@@ -43,34 +43,35 @@ Movables.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-var Log = function(x, y, speed, begin, end) {
-    Helper.call(this, x, y, 'images/log.png', speed, begin, end);
+// A Helper subClass 
+var Log = function(x, y, speed, beginPos, endPos) {
+    Helper.call(this, x, y, 'images/log.png', speed, beginPos, endPos);
 };
 Log.prototype = Object.create(Helper.prototype);
 
-var Turtle = function(x, y, speed, begin, end) {
-    Helper.call(this, x, y, 'images/turtle.png', speed, begin, end);
+// A Helper subClass
+var Turtle = function(x, y, speed, beginPos, endPos) {
+    Helper.call(this, x, y, 'images/turtle.png', speed, beginPos, endPos);
 };
 Turtle.prototype = Object.create(Helper.prototype);
 
-var Car = function(x, y, speed, begin, end) {
-    Enemy.call(this, x, y, 'images/car-right.png', speed, begin, end);
+// An Enemy subClass
+var Car = function(x, y, speed, beginPos, endPos) {
+    Enemy.call(this, x, y, 'images/car-right.png', speed, beginPos, endPos);
 };
 Car.prototype = Object.create(Enemy.prototype);
 
-var Truck = function(x, y, speed, begin, end) {
-    Enemy.call(this, x, y, 'images/truck-right-small.png', speed, begin, end);
+// An Enemy subClass
+var Truck = function(x, y, speed, beginPos, endPos) {
+    Enemy.call(this, x, y, 'images/truck-right-small.png', speed, beginPos, endPos);
 };
 Truck.prototype = Object.create(Enemy.prototype);
 
-var Bug = function(x, y, speed, begin, end) {
-    Enemy.call(this, x, y, 'images/enemy-bug.png', speed, begin, end);
+// An Enemy subClass
+var Sedan = function(x, y, speed, beginPos, endPos) {
+    Enemy.call(this, x, y, 'images/sedan.png', speed, beginPos, endPos);
 };
-Bug.prototype = Object.create(Enemy.prototype);
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+Sedan.prototype = Object.create(Enemy.prototype);
 
 var Player = function() {
     this.sprite = 'images/char-boy.png';
@@ -89,23 +90,9 @@ var sounds = [new Howl({src: ['sounds/splash.mp3']}),
 Player.prototype.update = function() {
 
     if (this.y > 0 && this.y < 320) {
-        for (i = 0; i < allHelpers.length; i++) {
-            if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
-                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
-            } else if (this.y + 53 === allHelpers[i].y) {
-                sounds[0].play();
-                this.restart();
-                this.loseLife();
-            }
-        }
+        this.checkForHelpers();
     } else if (this.y > 330 && this.y < 650) {
-        for (i = 0; i < allEnemies.length; i++) {
-            if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
-                sounds[1].play();
-                this.restart();
-                this.loseLife();
-            }
-        }
+        this.checkForCollisions();
     } else if (this.y === -9) {
         var message;
         if (this.level < 10) {
@@ -117,11 +104,36 @@ Player.prototype.update = function() {
             //All levels completed, Player has won the game.
             sounds[3].play();
             message = "WINNER!!! All levels Complete!"
+            updateLevel(0);
+            this.level = 1;
+            this.lives = 5;
         }
         // Show level complete modal, click ok to start next level.
-        showModal(message);
         this.restart();
+        showModal(message);
     }
+};
+
+Player.prototype.checkForCollisions = function(){
+    for (i = 0; i < allEnemies.length; i++) {
+            if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
+                sounds[1].play();
+                this.restart();
+                this.loseLife();
+            }
+        }
+};
+
+Player.prototype.checkForHelpers = function(){
+    for (i = 0; i < allHelpers.length; i++) {
+            if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
+                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
+            } else if (this.y + 53 === allHelpers[i].y) {
+                sounds[0].play();
+                this.restart();
+                this.loseLife();
+            }
+        }
 };
 
 Player.prototype.render = function() {
@@ -165,16 +177,16 @@ Player.prototype.loseLife = function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var LevelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Bug(-101, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Bug(-101, 560, 600, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Bug(-101, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Bug(-101, 560, 600, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Bug(-101, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Bug(-101, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Bug(-101, 560, 500, -101, 1100), new Bug(505, 560, 500, -101, 1100)]];
+var LevelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Sedan(-171, 560, 500, -101, 1100), new Sedan(505, 560, 500, -101, 1100)]];
 
 var LevelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300, 1110, -100), new Log(-101, 293, 350, -202, 1100)],
                     [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
@@ -185,7 +197,7 @@ var LevelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300
                     [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
                     [new Turtle(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
                     [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
-                    [new Turtle(202, 127, 550, -202, 1100), new Turtle(1111, 210, -600, 1110, -100), new Turtle(-101, 293, 650, -202, 1100)]];
+                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)]];
 
 var updateLevel = function(level){
     allEnemies = LevelEnemies[level];

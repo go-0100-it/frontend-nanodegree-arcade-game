@@ -1,4 +1,4 @@
-// Super Class for all auto moving objects in the game
+// Super Class for defining common properties to all auto moving objects in the game
 var Movables = function(x, y, sprite, speed, beginPos, endPos) {
 
     // The image/sprite for our movables, this uses
@@ -11,25 +11,26 @@ var Movables = function(x, y, sprite, speed, beginPos, endPos) {
     this.endPos = endPos;
 };
 
-// Super Class for enemies our player must avoid
+// Super Class for defining common properties to all enemy objects our player must avoid, also a subClass
+// to the Movables Class
 var Enemy = function(x, y, sprite, speed, beginPos, endPos) {
     Movables.call(this, x, y, sprite, speed, beginPos, endPos);
 };
 Enemy.prototype = Object.create(Movables.prototype);
 
-// Super Class for helpers our player must use
+// Super Class for defining common properties to all helper objects our player must use, also a subClass
+// to the Movables Class
 var Helper = function(x, y, sprite, speed, beginPos, endPos) {
     Movables.call(this, x, y, sprite, speed, beginPos, endPos);
 };
 Helper.prototype = Object.create(Movables.prototype);
 
-// Update the enemy's position, required method for game
+// Update the movables' position, required method for game
 // Parameter: dt, a time delta between ticks
 Movables.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
+    // Multiplying any movement by the dt parameter
+    // to ensure the game runs at the same speed for
     // all computers.
-
     this.x = this.x + this.speed * dt;
     if (this.endPos < this.beginPos && this.x < this.endPos) {
         this.x = this.beginPos;
@@ -43,36 +44,37 @@ Movables.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// A Helper subClass 
+// A subClass to the Helper Class to define a unique type of helper
 var Log = function(x, y, speed, beginPos, endPos) {
     Helper.call(this, x, y, 'images/log.png', speed, beginPos, endPos);
 };
 Log.prototype = Object.create(Helper.prototype);
 
-// A Helper subClass
+// A subClass to the Helper Class to define a unique type of helper
 var Turtle = function(x, y, speed, beginPos, endPos) {
     Helper.call(this, x, y, 'images/turtle.png', speed, beginPos, endPos);
 };
 Turtle.prototype = Object.create(Helper.prototype);
 
-// An Enemy subClass
+// A subClass to the Enemy Class to define a unique type of enemy
 var Car = function(x, y, speed, beginPos, endPos) {
     Enemy.call(this, x, y, 'images/car-right.png', speed, beginPos, endPos);
 };
 Car.prototype = Object.create(Enemy.prototype);
 
-// An Enemy subClass
+// A subClass to the Enemy Class to define a unique type of enemy
 var Truck = function(x, y, speed, beginPos, endPos) {
     Enemy.call(this, x, y, 'images/truck-right-small.png', speed, beginPos, endPos);
 };
 Truck.prototype = Object.create(Enemy.prototype);
 
-// An Enemy subClass
+// A subClass to the Enemy Class to define a unique type of enemy
 var Sedan = function(x, y, speed, beginPos, endPos) {
     Enemy.call(this, x, y, 'images/sedan.png', speed, beginPos, endPos);
 };
 Sedan.prototype = Object.create(Enemy.prototype);
 
+// A Class to define the player object and the player object's properties initial states.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.x = 505;
@@ -81,6 +83,7 @@ var Player = function() {
     this.level = 1;
 };
 
+// An array of Howl objects containing the sound effects files used in the game.
 var sounds = [new Howl({src: ['sounds/splash.mp3']}),
               new Howl({src: ['sounds/squish.wav']}),
               new Howl({src: ['sounds/levelComplete.mp3']}),
@@ -94,8 +97,39 @@ Player.prototype.update = function() {
     } else if (this.y > 330 && this.y < 650) {
         this.checkForCollisions();
     } else if (this.y === -9) {
-        var message;
-        if (this.level < 10) {
+        this.advanceLevel();
+    }
+};
+
+// A method to detect if the enemy sprites are at the same position as the player sprite
+Player.prototype.checkForCollisions = function(){
+    for (i = 0; i < allEnemies.length; i++) {
+            if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
+                sounds[1].play();
+                this.restart();
+                this.loseLife();
+            }
+        }
+};
+
+// A method to detect if the helper sprites are at the same position as the player sprite
+Player.prototype.checkForHelpers = function(){
+    for (i = 0; i < allHelpers.length; i++) {
+            if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
+                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
+            } else if (this.y + 53 === allHelpers[i].y) {
+                sounds[0].play();
+                this.restart();
+                this.loseLife();
+            }
+        }
+};
+
+// A method to advance the player to a more difficult level if the player makes it to the top position.  If the player
+// has completed all the levels then the player has won the game and the game starts over.
+Player.prototype.advanceLevel = function(){
+    var message;
+        if (this.level < LevelEnemies.length) {
             sounds[2].play();
             message = "Level " + (this.level) + " Complete!"
             updateLevel(this.level);
@@ -111,31 +145,9 @@ Player.prototype.update = function() {
         // Show level complete modal, click ok to start next level.
         this.restart();
         showModal(message);
-    }
-};
+}
 
-Player.prototype.checkForCollisions = function(){
-    for (i = 0; i < allEnemies.length; i++) {
-            if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
-                sounds[1].play();
-                this.restart();
-                this.loseLife();
-            }
-        }
-};
-
-Player.prototype.checkForHelpers = function(){
-    for (i = 0; i < allHelpers.length; i++) {
-            if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
-                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
-            } else if (this.y + 53 === allHelpers[i].y) {
-                sounds[0].play();
-                this.restart();
-                this.loseLife();
-            }
-        }
-};
-
+// Renders the player to the canvas
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -152,6 +164,7 @@ Player.prototype.handleInput = function(k) {
     }
 };
 
+// Positions the player at the start position.
 Player.prototype.restart = function() {
     this.x = 505;
     this.y = 655;
@@ -173,10 +186,8 @@ Player.prototype.loseLife = function() {
     }
 }
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
+// All enemy objects are defined in an array of arrays called LevelEnemies, each element of the LevelEnemies array contains
+// an array of enemy objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
 var LevelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
                     [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
                     [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
@@ -188,6 +199,8 @@ var LevelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 4
                     [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
                     [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Sedan(-171, 560, 500, -101, 1100), new Sedan(505, 560, 500, -101, 1100)]];
 
+// All helper objects are defined in an array of arrays called LevelHelper, each element of the LevelHelpers array contains
+// an array of helper objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
 var LevelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300, 1110, -100), new Log(-101, 293, 350, -202, 1100)],
                     [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
                     [new Log(202, 127, 450, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
@@ -199,17 +212,19 @@ var LevelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300
                     [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
                     [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)]];
 
+// A function to update the allEnemies, allHelpers, and allMovables variables if the players level is advanced.
 var updateLevel = function(level){
     allEnemies = LevelEnemies[level];
     allHelpers = LevelHelpers[level];
     allMovables = allHelpers.concat(allEnemies);
 };
 
+// Calling the updateLevel function to initialize the allEnemies, allHelpers, and allMovables variables.
 updateLevel(0);
 
 var player = new Player();
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// This listens for key presses and sends the keys to the
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -217,9 +232,12 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
+
+    // Only allow player movement if the modal is not showing.  If the modal is showing enable the "Enter" key
+    // to close the modal.
     if (_modal.style.display == "none") {
         player.handleInput(allowedKeys[e.keyCode]);
     } else if (e.keyCode === 13){
-        _modal.style.display = "none";
+        close_modal(clear);
     }
 });

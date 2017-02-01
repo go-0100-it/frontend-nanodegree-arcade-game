@@ -1,3 +1,49 @@
+var allHelpers = [];
+var allEnemies = [];
+var allMovables = [];
+
+var Game = function(){
+    // An array of Howl objects containing the sound effects files used in the game.
+    this.sounds = [new Howl({src: ['sounds/splash.mp3']}),
+                   new Howl({src: ['sounds/squish.wav']}),
+                   new Howl({src: ['sounds/levelComplete.mp3']}),
+                   new Howl({src: ['sounds/winner.wav']}),
+                   new Howl({src: ['sounds/gameOver.mp3']})];
+
+    // All enemy objects are defined in an array of arrays called LevelEnemies, each element of the LevelEnemies array contains
+    // an array of enemy objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
+    this.levelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                    [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                    [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Sedan(-171, 560, 500, -101, 1100), new Sedan(505, 560, 500, -101, 1100)]];
+
+    // All helper objects are defined in an array of arrays called LevelHelper, each element of the LevelHelpers array contains
+    // an array of helper objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
+    this.levelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300, 1110, -100), new Log(-101, 293, 350, -202, 1100)],
+                    [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
+                    [new Log(202, 127, 450, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
+                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
+                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
+                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
+                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
+                    [new Turtle(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
+                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
+                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)]];
+};
+
+// A function to update the allEnemies, allHelpers, and allMovables variables if the players level is advanced.
+Game.prototype.updateDifficulty = function(level){
+    allEnemies = this.levelEnemies[level];
+    allHelpers = this.levelHelpers[level];
+    allMovables = allHelpers.concat(allEnemies);
+};
+
 // Super Class for defining common properties to all auto moving objects in the game
 var Movables = function(x, y, sprite, speed, beginPos, endPos) {
 
@@ -74,6 +120,7 @@ var Sedan = function(x, y, speed, beginPos, endPos) {
 };
 Sedan.prototype = Object.create(Enemy.prototype);
 
+var game = new Game();
 // A Class to define the player object and the player object's properties initial states.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
@@ -82,13 +129,6 @@ var Player = function() {
     this.lives = 5;
     this.level = 1;
 };
-
-// An array of Howl objects containing the sound effects files used in the game.
-var sounds = [new Howl({src: ['sounds/splash.mp3']}),
-              new Howl({src: ['sounds/squish.wav']}),
-              new Howl({src: ['sounds/levelComplete.mp3']}),
-              new Howl({src: ['sounds/winner.wav']}),
-              new Howl({src: ['sounds/gameOver.mp3']})];
 
 Player.prototype.update = function() {
 
@@ -105,7 +145,7 @@ Player.prototype.update = function() {
 Player.prototype.checkForCollisions = function(){
     for (i = 0; i < allEnemies.length; i++) {
             if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
-                sounds[1].play();
+                game.sounds[1].play();
                 this.restart();
                 this.loseLife();
             }
@@ -118,7 +158,7 @@ Player.prototype.checkForHelpers = function(){
             if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
                 this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
             } else if (this.y + 53 === allHelpers[i].y) {
-                sounds[0].play();
+                game.sounds[0].play();
                 this.restart();
                 this.loseLife();
             }
@@ -129,16 +169,16 @@ Player.prototype.checkForHelpers = function(){
 // has completed all the levels then the player has won the game and the game starts over.
 Player.prototype.advanceLevel = function(){
     var message;
-        if (this.level < LevelEnemies.length) {
-            sounds[2].play();
+        if (this.level < game.levelEnemies.length) {
+            game.sounds[2].play();
             message = "Level " + (this.level) + " Complete!"
-            updateLevel(this.level);
+            game.updateDifficulty(this.level);
             this.level++;
         } else {
             //All levels completed, Player has won the game.
-            sounds[3].play();
+            game.sounds[3].play();
             message = "WINNER!!! All levels Complete!"
-            updateLevel(0);
+            game.updateDifficulty(0);
             this.level = 1;
             this.lives = 5;
         }
@@ -176,51 +216,18 @@ Player.prototype.loseLife = function() {
 
     // If on last life, show game over modal, click try again or exit. reset level to 1 and lives back to 5.
     if (this.lives <= 0) {
-        sounds[4].play();
+        game.sounds[4].play();
         var message = "GAME OVER!"
         showModal(message);
         this.level = 1;
-        updateLevel(0);
+        game.updateDifficulty(0);
         this.lives = 5;
         this.restart();
     }
 }
 
-// All enemy objects are defined in an array of arrays called LevelEnemies, each element of the LevelEnemies array contains
-// an array of enemy objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
-var LevelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Sedan(-171, 560, 500, -101, 1100), new Sedan(505, 560, 500, -101, 1100)]];
-
-// All helper objects are defined in an array of arrays called LevelHelper, each element of the LevelHelpers array contains
-// an array of helper objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
-var LevelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300, 1110, -100), new Log(-101, 293, 350, -202, 1100)],
-                    [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
-                    [new Log(202, 127, 450, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
-                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
-                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
-                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
-                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
-                    [new Turtle(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
-                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
-                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)]];
-
-// A function to update the allEnemies, allHelpers, and allMovables variables if the players level is advanced.
-var updateLevel = function(level){
-    allEnemies = LevelEnemies[level];
-    allHelpers = LevelHelpers[level];
-    allMovables = allHelpers.concat(allEnemies);
-};
-
 // Calling the updateLevel function to initialize the allEnemies, allHelpers, and allMovables variables.
-updateLevel(0);
+game.updateDifficulty(0);
 
 var player = new Player();
 // This listens for key presses and sends the keys to the

@@ -1,6 +1,6 @@
-var allHelpers = [];
-var allEnemies = [];
-var allMovables = [];
+var allHelpers  = [],
+    allEnemies  = [],
+    allMovables = [];
 
 var Game = function(){
     // An array of Howl objects containing the sound effects files used in the game.
@@ -10,31 +10,31 @@ var Game = function(){
                    new Howl({src: ['sounds/winner.wav']}),
                    new Howl({src: ['sounds/gameOver.mp3']})];
 
-    // All enemy objects are defined in an array of arrays called LevelEnemies, each element of the LevelEnemies array contains
+    // All enemy objects are defined in an array of arrays called levelEnemies, each element of the levelEnemies array contains
     // an array of enemy objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
     this.levelEnemies = [[new Truck(-101, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
-                    [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
-                    [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Sedan(-171, 560, 500, -101, 1100), new Sedan(505, 560, 500, -101, 1100)]];
+                        [new Truck(-101, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                        [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
+                        [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                        [new Truck(-101, 394, 300, -101, 1100), new Truck(505, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(505, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                        [new Truck(-101, 394, 400, -101, 1100), new Truck(505, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(505, 477, 500, -101, 1100), new Sedan(-171, 560, 600, -101, 1100)],
+                        [new Truck(-101, 394, 500, -101, 1100), new Truck(505, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(505, 477, 600, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                        [new Truck(-101, 394, 300, -101, 1100), new Truck(330, 394, 300, -101, 1100), new Truck(660, 394, 300, -101, 1100), new Car(-101, 477, 400, -101, 1100), new Car(330, 477, 400, -101, 1100), new Car(660, 477, 400, -101, 1100), new Sedan(-171, 560, 500, -101, 1100)],
+                        [new Truck(-101, 394, 400, -101, 1100), new Truck(330, 394, 400, -101, 1100), new Truck(660, 394, 400, -101, 1100), new Car(-101, 477, 500, -101, 1100), new Car(330, 477, 500, -101, 1100), new Car(660, 477, 500, -101, 1100), new Sedan(-171, 560, 700, -101, 1100)],
+                        [new Truck(-101, 394, 500, -101, 1100), new Truck(330, 394, 500, -101, 1100), new Truck(660, 394, 500, -101, 1100), new Car(-101, 477, 600, -101, 1100), new Car(330, 477, 600, -101, 1100), new Car(660, 477, 600, -101, 1100), new Sedan(-171, 560, 500, -101, 1100), new Sedan(505, 560, 500, -101, 1100)]];
 
-    // All helper objects are defined in an array of arrays called LevelHelper, each element of the LevelHelpers array contains
+    // All helper objects are defined in an array of arrays called levelHelpers, each element of the levelHelpers array contains
     // an array of helper objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
     this.levelHelpers = [[new Log(202, 127, 250, -202, 1100), new Log(1111, 210, -300, 1110, -100), new Log(-101, 293, 350, -202, 1100)],
-                    [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
-                    [new Log(202, 127, 450, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
-                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
-                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
-                    [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
-                    [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
-                    [new Turtle(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
-                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
-                    [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)]];
+                        [new Log(202, 127, 350, -202, 1100), new Log(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
+                        [new Log(202, 127, 450, -202, 1100), new Log(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
+                        [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Log(-101, 293, 450, -202, 1100)],
+                        [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Log(-101, 293, 550, -202, 1100)],
+                        [new Log(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
+                        [new Log(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
+                        [new Turtle(202, 127, 350, -202, 1100), new Turtle(1111, 210, -400, 1110, -100), new Turtle(-101, 293, 450, -202, 1100)],
+                        [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)],
+                        [new Turtle(202, 127, 450, -202, 1100), new Turtle(1111, 210, -500, 1110, -100), new Turtle(-101, 293, 550, -202, 1100)]];
 };
 
 // A function to update the allEnemies, allHelpers, and allMovables variables if the players level is advanced.
@@ -141,7 +141,7 @@ Player.prototype.update = function() {
     }
 };
 
-// A method to detect if the enemy sprites are at the same position as the player sprite
+// A method to detect if an enemy sprite is at the same position as the player sprite
 Player.prototype.checkForCollisions = function(){
     for (i = 0; i < allEnemies.length; i++) {
             if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
@@ -170,19 +170,19 @@ Player.prototype.checkForHelpers = function(){
 Player.prototype.advanceLevel = function(){
     var message;
         if (this.level < game.levelEnemies.length) {
-            game.sounds[2].play();
+            game.sounds[2].play(); //level complete sound
             message = "Level " + (this.level) + " Complete!"
             game.updateDifficulty(this.level);
             this.level++;
         } else {
             //All levels completed, Player has won the game.
-            game.sounds[3].play();
+            game.sounds[3].play(); // Successfully completed all levels sound.
             message = "WINNER!!! All levels Complete!"
             game.updateDifficulty(0);
             this.level = 1;
             this.lives = 5;
         }
-        // Show level complete modal, click ok to start next level.
+        // Restart player and show modal.
         this.restart();
         showModal(message);
 }
@@ -192,6 +192,7 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// Key press input handler.  Changes player sprite location in direction of key pressed.
 Player.prototype.handleInput = function(k) {
     if (k === 'left' && this.x > 0) {
         this.x = this.x - 101;

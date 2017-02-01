@@ -11,6 +11,9 @@ var Game = function() {
         new Howl({ src: ['sounds/gameOver.mp3'] })
     ];
 
+    this.livesInfoElement = document.getElementById("lives");
+    this.levelInfoElement = document.getElementById("level");
+
     // All enemy objects are defined in an array of arrays called levelEnemies, each element of the levelEnemies array contains
     // an array of enemy objects which corresponds to a different level of difficulty.  Level 1 is element 0, level 2 is element 1 and so on...
     this.levelEnemies = [
@@ -188,6 +191,7 @@ Player.prototype.advanceLevel = function() {
         this.lives = 5;
     }
     // Restart player and show modal.
+    game.levelInfoElement.innerHTML = this.level;
     this.restart();
     showModal(message);
 };
@@ -230,6 +234,8 @@ Player.prototype.loseLife = function() {
         this.lives = 5;
         this.restart();
     }
+    game.livesInfoElement.innerHTML = this.lives;
+    game.levelInfoElement.innerHTML = this.level;
 };
 
 // Calling the updateLevel function to initialize the allEnemies, allHelpers, and allMovables variables.

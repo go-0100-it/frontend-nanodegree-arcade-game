@@ -1,6 +1,30 @@
 body {
+    background-color: darkgray;
     text-align: center;
 }
+
+.info-container,
+.info {
+    margin: 0;
+    margin: 5px;
+    border: solid black 2px;
+}
+
+.info-container {
+    width: 1111px;
+    margin: 0 auto;
+}
+
+.info {
+    text-align: left;
+}
+
+img {
+    padding-left: 7.5px;
+    padding-top: 10px;
+    padding-right: 7.5px;
+}
+
 
 /* The Modal (background) */
 
@@ -26,6 +50,7 @@ body {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
+
 /* Modal Content */
 
 .modal_content {
@@ -49,6 +74,7 @@ body {
 #project_example_image {
     margin-top: 2vw;
 }
+
 
 /* The Close Button */
 

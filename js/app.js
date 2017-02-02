@@ -46,7 +46,11 @@ var Game = function() {
 };
 
 // A function to update the allEnemies, allHelpers, and allMovables variables if the players level is advanced.
-Game.prototype.updateDifficulty = function(level) {
+Game.prototype.updateDifficulty = function(num, message, level, imgSrc) {
+    if(num){
+        this.sounds[num].play();
+    }
+    showModal(message, imgSrc);
     allEnemies = this.levelEnemies[level];
     allHelpers = this.levelHelpers[level];
     allMovables = allHelpers.concat(allEnemies);
@@ -136,6 +140,8 @@ var Player = function() {
     this.y = 655;
     this.lives = 5;
     this.level = 1;
+    this.onHelper = false;
+    this.onHelperNum = null;
 };
 
 Player.prototype.update = function() {
@@ -153,9 +159,7 @@ Player.prototype.update = function() {
 Player.prototype.checkForCollisions = function() {
     for (i = 0; i < allEnemies.length; i++) {
         if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
-            game.sounds[1].play();
-            this.restart();
-            this.loseLife();
+            this.loseLife(1);
         }
     }
 };
@@ -163,12 +167,19 @@ Player.prototype.checkForCollisions = function() {
 // A method to detect if the helper sprites are at the same position as the player sprite
 Player.prototype.checkForHelpers = function() {
     for (i = 0; i < allHelpers.length; i++) {
-        if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
-            this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
-        } else if (this.y + 53 === allHelpers[i].y) {
-            game.sounds[0].play();
-            this.restart();
-            this.loseLife();
+        if(this.onHelper && this.onHelperNum === i){
+            if(allHelpers[i].x < -100 || allHelpers[i].x > 1211 - Resources.get(allHelpers[i].sprite).width){
+                this.loseLife(0);
+            }else{
+                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
+            }
+        }else{
+            if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
+                this.setHelper(true, i);
+                this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
+            } else if (this.y + 53 === allHelpers[i].y) {
+                this.loseLife(0);
+            }
         }
     }
 };
@@ -176,24 +187,17 @@ Player.prototype.checkForHelpers = function() {
 // A method to advance the player to a more difficult level if the player makes it to the top position.  If the player
 // has completed all the levels then the player has won the game and the game starts over.
 Player.prototype.advanceLevel = function() {
-    var message;
     if (this.level < game.levelEnemies.length) {
-        game.sounds[2].play(); //level complete sound
-        message = "Level " + (this.level) + " Complete!"
-        game.updateDifficulty(this.level);
+        game.updateDifficulty(2, "Level " + (this.level) + " Complete!", this.level, "images/Star.png");
         this.level++;
     } else {
         //All levels completed, Player has won the game.
-        game.sounds[3].play(); // Successfully completed all levels sound.
-        message = "WINNER!!! All levels Complete!"
-        game.updateDifficulty(0);
+        game.updateDifficulty(3, "WINNER!!!   All levels Complete!", 0, "images/trophy.png");
         this.level = 1;
         this.lives = 5;
     }
     // Restart player and show modal.
-    game.levelInfoElement.innerHTML = this.level;
     this.restart();
-    showModal(message);
 };
 
 // Renders the player to the canvas
@@ -208,38 +212,54 @@ Player.prototype.handleInput = function(k) {
     } else if (k === 'right' && this.x < 1010) {
         this.x = this.x + 101;
     } else if (k === 'up' && this.y > 0) {
+        this.setHelper();
         this.y = this.y - 83;
     } else if (k === 'down' && this.y < 655) {
+        this.setHelper();
         this.y = this.y + 83;
     }
 };
 
-// Positions the player at the start position.
-Player.prototype.restart = function() {
-    this.x = 505;
-    this.y = 655;
+// A method to set player onHelper status.  Used to define if player is on a helper and if so
+// the index number of the helper the player is on.
+Player.prototype.setHelper = function(status, num){
+    if(status){
+        this.onHelper = status;
+        this.onHelperNum = num;
+    }else{
+        this.onHelper = false;
+        this.onHelperNum = null;
+    }
+    
 };
 
-Player.prototype.loseLife = function() {
-    // Lose one of 5 lives.
-    this.lives--;
-
-    // If on last life, show game over modal, click try again or exit. reset level to 1 and lives back to 5.
-    if (this.lives <= 0) {
-        game.sounds[4].play();
-        var message = "GAME OVER!"
-        showModal(message);
-        this.level = 1;
-        game.updateDifficulty(0);
-        this.lives = 5;
-        this.restart();
-    }
+// A method to position the player at the start position, resets the players onHelper properties, 
+// and updates info display.
+Player.prototype.restart = function() {
+    this.setHelper();
+    this.x = 505;
+    this.y = 655;
     game.livesInfoElement.innerHTML = this.lives;
     game.levelInfoElement.innerHTML = this.level;
 };
 
+// A method to decrease the players lives.  If player is out of lives triggers game over and restart.
+Player.prototype.loseLife = function(num) {
+    // Lose one of 5 lives.
+    game.sounds[num].play();
+    this.lives--;
+
+    // If on last life, show game over modal and reset level to 1 and lives back to 5.
+    if (this.lives <= 0) {
+        this.level = 1;
+        game.updateDifficulty(4, "GAME OVER!", 0, "images/fail.gif");
+        this.lives = 5;
+    }
+    this.restart();
+};
+
 // Calling the updateLevel function to initialize the allEnemies, allHelpers, and allMovables variables.
-game.updateDifficulty(0);
+game.updateDifficulty(null, 'Press "ENTER" to start', 0, "images/start.gif");
 
 var player = new Player();
 // This listens for key presses and sends the keys to the

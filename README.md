@@ -4,19 +4,31 @@ frontend-nanodegree-arcade-game
 ## How to run the game
 
 To run the frontend-nanodegree-arcade-game;
-* download the zip file to your machine
+1. download the zip file from the github repository to your machine
 
   ![Zip file download image](images/Zip_file_download.png)
   
-* open the index.html file
+  
+2. open the index.html file
 
   ![Index.html file open image](images/Index_file_open.png)
   
-* the game will load with a prompt, press enter to start
+  
+3. the game will load with a prompt, press enter to start
 
   ![Game start prompt image](images/Start_prompt.png)
   
-* Enjoy the game! :+1:
+  
+4. Enjoy the game! :+1:
+
+
+## How to play the game
+
+The object of the game is to navigate to the top of the game board for each of the 10 levels to obtain the winners trophy.
+
+1. The first section of the board is the road, make it to the middle grass area without being hit by a vehicle.
+2. The second section of the board is the river, hop on the logs and turtles to make it across the river, but to the top grass section
+3. Once the player is at the top grass section the current level is complete, there are 10 levels in total to complete in order to obtain the winners trophy.
 
 This game was created to satisfy the following project outline...
 

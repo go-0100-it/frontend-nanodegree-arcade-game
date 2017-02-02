@@ -193,8 +193,7 @@ Player.prototype.advanceLevel = function() {
     } else {
         //All levels completed, Player has won the game.
         game.updateDifficulty(3, "WINNER!!!   All levels Complete!", 0, "images/trophy.png");
-        this.level = 1;
-        this.lives = 5;
+        this.reset();
     }
     // Restart player and show modal.
     this.restart();
@@ -243,6 +242,11 @@ Player.prototype.restart = function() {
     game.levelInfoElement.innerHTML = this.level;
 };
 
+Player.prototype.reset = function(){
+    this.level = 1;
+    this.lives = 5;
+}
+
 // A method to decrease the players lives.  If player is out of lives triggers game over and restart.
 Player.prototype.loseLife = function(num) {
     // Lose one of 5 lives.
@@ -251,9 +255,8 @@ Player.prototype.loseLife = function(num) {
 
     // If on last life, show game over modal and reset level to 1 and lives back to 5.
     if (this.lives <= 0) {
-        this.level = 1;
+        this.reset();
         game.updateDifficulty(4, "GAME OVER!", 0, "images/fail.gif");
-        this.lives = 5;
     }
     this.restart();
 };
@@ -263,7 +266,7 @@ game.updateDifficulty(null, 'Press "ENTER" to start', 0, "images/start.gif");
 
 var player = new Player();
 // This listens for key presses and sends the keys to the
-// Player.handleInput() method.
+// handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',

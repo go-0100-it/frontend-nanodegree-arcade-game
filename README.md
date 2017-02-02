@@ -5,12 +5,15 @@ frontend-nanodegree-arcade-game
 
 To run the frontend-nanodegree-arcade-game;
 * download the zip file to your machine
+
   ![Zip file download image](images/Index_file_open.png)
   
 * open the index.html file
+
   ![Index.html file open image](images/Index_file_open.png)
   
-* the game will load with a prompt, press enter to start.
+* the game will load with a prompt, press enter to start
+
   ![Game start prompt image](images/Index_file_open.png)
 
 

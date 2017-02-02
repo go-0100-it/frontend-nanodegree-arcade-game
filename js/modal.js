@@ -1,7 +1,8 @@
 // Get the modal
 var _modal = document.getElementById('myModal');
 // Get the elements of the modal for reference
-var modelTitle = document.getElementById("modal_title");
+var modalTitle = document.getElementById("modal_title");
+var modalImg = document.getElementById("modal_image");
 
 _modal.style.display = "none";
 
@@ -28,9 +29,10 @@ var unhover = function(element) {
 // A function statement to be passed to the modal function when the user clicks the button.
 // The modal function will invoke this function to show the modal.
 // Also selecting the project object and extracting the corresponding project values.
-var showModal = function(message) {
+var showModal = function(message, src) {
 
-    modelTitle.textContent = message;
+    modalTitle.textContent = message;
+    modalImg.setAttribute('src', src);
 
     //Displaying the modal.
     _modal.style.display = "block";
@@ -44,5 +46,5 @@ var close_modal = function(func) {
 
 // A function statement to be passed to the modal function, to clear all previously set element values.
 var clear = function() {
-    modelTitle.textContent = "";
+    modalTitle.textContent = "";
 }

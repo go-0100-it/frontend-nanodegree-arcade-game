@@ -16,7 +16,7 @@ To run the frontend-nanodegree-arcade-game;
 
   ![Game start prompt image](images/Start_prompt.png)
   
-* Enjoy the game! :+1
+* Enjoy the game! +1
 
 This game was created to satisfy the following project outline...
 

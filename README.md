@@ -32,7 +32,7 @@ The object of the game is to navigate to the top of the game board for each of t
   ![Road section of game board image](images/road.png)
   
   
-2. The second section of the board is the river, hop on the logs and turtles to make it across the river, but to the top grass section
+2. The second section of the board is the river, hop on the logs and turtles to make it across the river to the top grass section, but be careful not to get washed off the screen!!
   
   ![River section of game board image](images/river.png)
   

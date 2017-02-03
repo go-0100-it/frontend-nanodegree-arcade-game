@@ -5,17 +5,17 @@ frontend-nanodegree-arcade-game
 
 To run the frontend-nanodegree-arcade-game;
 
-1. download the zip file from the github repository to your machine
+1. Download the zip file from the github repository to your machine or device
 
   ![Zip file download image](images/Zip_file_download.png)
   
   
-2. open the index.html file
+2. Open the index.html file in any browser
 
   ![Index.html file open image](images/Index_file_open.png)
   
   
-3. the game will load with a prompt, press enter to start
+3. The game will load with a prompt, press enter to start
 
   ![Game start prompt image](images/Start_prompt.png)
   

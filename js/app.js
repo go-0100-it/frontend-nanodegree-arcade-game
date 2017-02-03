@@ -262,7 +262,7 @@ Player.prototype.loseLife = function(num) {
 };
 
 // Calling the updateLevel function to initialize the allEnemies, allHelpers, and allMovables variables.
-game.updateDifficulty(null, 'Press "ENTER" to start', 0, "images/start.gif");
+game.updateDifficulty(null, 'Press "ENTER" to start', 0, "images/start.png");
 
 var player = new Player();
 // This listens for key presses and sends the keys to the

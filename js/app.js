@@ -4,11 +4,21 @@ var allHelpers = [],
 
 var Game = function() {
     // An array of Howl objects containing the sound effects files used in the game.
-    this.sounds = [new Howl({ src: ['sounds/splash.mp3'] }),
-        new Howl({ src: ['sounds/squish.wav'] }),
-        new Howl({ src: ['sounds/levelComplete.mp3'] }),
-        new Howl({ src: ['sounds/winner.wav'] }),
-        new Howl({ src: ['sounds/gameOver.mp3'] })
+    this.sounds = [new Howl({
+            src: ['sounds/splash.mp3']
+        }),
+        new Howl({
+            src: ['sounds/squish.wav']
+        }),
+        new Howl({
+            src: ['sounds/levelComplete.mp3']
+        }),
+        new Howl({
+            src: ['sounds/winner.wav']
+        }),
+        new Howl({
+            src: ['sounds/gameOver.mp3']
+        })
     ];
 
     this.livesInfoElement = document.getElementById("lives");
@@ -47,7 +57,7 @@ var Game = function() {
 
 // A function to update the allEnemies, allHelpers, and allMovables variables if the players level is advanced.
 Game.prototype.updateDifficulty = function(num, message, level, imgSrc) {
-    if(num){
+    if (num) {
         this.sounds[num].play();
     }
     showModal(message, imgSrc);
@@ -167,13 +177,13 @@ Player.prototype.checkForCollisions = function() {
 // A method to detect if the helper sprites are at the same position as the player sprite
 Player.prototype.checkForHelpers = function() {
     for (i = 0; i < allHelpers.length; i++) {
-        if(this.onHelper && this.onHelperNum === i){
-            if(allHelpers[i].x < -100 || allHelpers[i].x > 1211 - Resources.get(allHelpers[i].sprite).width){
+        if (this.onHelper && this.onHelperNum === i) {
+            if (allHelpers[i].x < -100 || allHelpers[i].x > 1211 - Resources.get(allHelpers[i].sprite).width) {
                 this.loseLife(0);
-            }else{
+            } else {
                 this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
             }
-        }else{
+        } else {
             if (this.y + 53 === allHelpers[i].y && this.x >= allHelpers[i].x && this.x <= allHelpers[i].x + Resources.get(allHelpers[i].sprite).width) {
                 this.setHelper(true, i);
                 this.x = allHelpers[i].x + Resources.get(allHelpers[i].sprite).width / 2 - Resources.get(this.sprite).width / 2;
@@ -221,15 +231,15 @@ Player.prototype.handleInput = function(k) {
 
 // A method to set player onHelper status.  Used to define if player is on a helper and if so
 // the index number of the helper the player is on.
-Player.prototype.setHelper = function(status, num){
-    if(status){
+Player.prototype.setHelper = function(status, num) {
+    if (status) {
         this.onHelper = status;
         this.onHelperNum = num;
-    }else{
+    } else {
         this.onHelper = false;
         this.onHelperNum = null;
     }
-    
+
 };
 
 // A method to position the player at the start position, resets the players onHelper properties, 
@@ -242,10 +252,10 @@ Player.prototype.restart = function() {
     game.levelInfoElement.innerHTML = this.level;
 };
 
-Player.prototype.reset = function(){
+Player.prototype.reset = function() {
     this.level = 1;
     this.lives = 5;
-}
+};
 
 // A method to decrease the players lives.  If player is out of lives triggers game over and restart.
 Player.prototype.loseLife = function(num) {

@@ -10,7 +10,7 @@ To run the frontend-nanodegree-arcade-game;
   ![Zip file download image](images/Zip_file_download.png)
   
   
-2. Open the index.html file in any browser
+2. Open the index.html file in any browser, but for thr best user experience use chrome or firefox
 
   ![Index.html file open image](images/Index_file_open.png)
   
@@ -44,7 +44,7 @@ The object of the game is to navigate to the top of the game board for each of t
 
 ## Why this game?
 
-This game was created to satisfy the following project outline...
+This game was created as a project during my front-end nanodegree at Udacity and was to satisfy the following project outline...
 
 Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
 

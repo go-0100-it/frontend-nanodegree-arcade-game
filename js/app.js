@@ -1,6 +1,8 @@
 var allHelpers = [],
     allEnemies = [],
-    allMovables = [];
+    allMovables = [],
+    allHelpersLen,
+    allEnemiesLen;
 
 var Game = function() {
     // An array of Howl objects containing the sound effects files used in the game.
@@ -64,6 +66,8 @@ Game.prototype.updateDifficulty = function(num, message, level, imgSrc) {
     allEnemies = this.levelEnemies[level];
     allHelpers = this.levelHelpers[level];
     allMovables = allHelpers.concat(allEnemies);
+    allEnemiesLen = allEnemies.length;
+    allHelpersLen = allHelpers.length;
 };
 
 // Super Class for defining common properties to all auto moving objects in the game
@@ -167,7 +171,7 @@ Player.prototype.update = function() {
 
 // A method to detect if an enemy sprite is at the same position as the player sprite
 Player.prototype.checkForCollisions = function() {
-    for (i = 0; i < allEnemies.length; i++) {
+    for (i = 0; i < allEnemiesLen; i++) {
         if (this.y - 12 === allEnemies[i].y && this.x >= allEnemies[i].x && this.x <= allEnemies[i].x + Resources.get(allEnemies[i].sprite).width) {
             this.loseLife(1);
         }
@@ -176,7 +180,7 @@ Player.prototype.checkForCollisions = function() {
 
 // A method to detect if the helper sprites are at the same position as the player sprite
 Player.prototype.checkForHelpers = function() {
-    for (i = 0; i < allHelpers.length; i++) {
+    for (i = 0; i < allHelpersLen; i++) {
         if (this.onHelper && this.onHelperNum === i) {
             if (allHelpers[i].x < -100 || allHelpers[i].x > 1211 - Resources.get(allHelpers[i].sprite).width) {
                 this.loseLife(0);

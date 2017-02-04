@@ -69,6 +69,7 @@ Game.prototype.updateDifficulty = function(num, message, level, imgSrc) {
     allEnemiesLen = allEnemies.length;
     allHelpersLen = allHelpers.length;
 };
+Game.prototype.constructor = Game;
 
 // Super Class for defining common properties to all auto moving objects in the game
 var Movables = function(x, y, sprite, speed, beginPos, endPos) {
@@ -89,6 +90,7 @@ var Enemy = function(x, y, sprite, speed, beginPos, endPos) {
     Movables.call(this, x, y, sprite, speed, beginPos, endPos);
 };
 Enemy.prototype = Object.create(Movables.prototype);
+Enemy.prototype.constructor = Enemy;
 
 // Super Class for defining common properties to all helper objects our player must use, also a subClass
 // to the Movables Class
@@ -96,6 +98,7 @@ var Helper = function(x, y, sprite, speed, beginPos, endPos) {
     Movables.call(this, x, y, sprite, speed, beginPos, endPos);
 };
 Helper.prototype = Object.create(Movables.prototype);
+Helper.prototype.constructor = Helper;
 
 // Update the movables' position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -115,6 +118,7 @@ Movables.prototype.update = function(dt) {
 Movables.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+Movables.prototype.constructor = Movables;
 
 // A subClass to the Helper Class to define a unique type of helper
 var Log = function(x, y, speed, beginPos, endPos) {
@@ -274,6 +278,7 @@ Player.prototype.loseLife = function(num) {
     }
     this.restart();
 };
+Player.prototype.constructor = Player;
 
 // Calling the updateLevel function to initialize the allEnemies, allHelpers, and allMovables variables.
 game.updateDifficulty(null, 'Press "ENTER" to start', 0, "images/start.png");
